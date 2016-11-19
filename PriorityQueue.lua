@@ -11,18 +11,13 @@ function PriorityQueue.new()
 end
 
 function PriorityQueue:Enqueue(item, priority)
-	debug.profilebegin("PriorityQueue:Enqueue")
 	local index = 1
 
-	debug.profilebegin("Index computation")
 	for existingPriority, count in pairs(self._counts) do
-		if existingPriority > priority then
-			break
-		else
+		if existingPriority <= priority then
 			index = index + count
 		end
 	end
-	debug.profileend()
 
 	table.insert(self._items, index, item)
 	self._counts[priority] = self._counts[priority] + 1
@@ -31,7 +26,6 @@ function PriorityQueue:Enqueue(item, priority)
 	if self._first > priority then
 		self._first = priority
 	end
-	debug.profileend()
 end
 
 function PriorityQueue:Peek()
@@ -39,17 +33,17 @@ function PriorityQueue:Peek()
 end
 
 function PriorityQueue:DequeueFirst()
-	debug.profilebegin("PriorityQueue:DequeueFirst")
-	local item = self:Peek()
-	local itemPriority = self._first
+	if #self._items > 0 then
+		local item = self:Peek()
+		local itemPriority = self._first
 
-	self._counts[itemPriority] = self._counts[itemPriority] - 1
-	self.Count = self.Count - 1
+		self._counts[itemPriority] = self._counts[itemPriority] - 1
+		self.Count = self.Count - 1
 
-	table.remove(self._items, 1)
-	debug.profileend()
+		table.remove(self._items, 1)
 
-	return item
+		return item
+	end
 end
 
 return PriorityQueue
