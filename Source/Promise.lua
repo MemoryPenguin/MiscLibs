@@ -3,17 +3,18 @@ Promise.__index = Promise
 
 function Promise.new()
 	local self = setmetatable({
-		_fulfilled = false;
+		IsFulfilled = false;
 		_fulfilledSignal = Instance.new("BindableEvent");
-	})
+	}, Promise)
 	
 	self.Fulfilled = self._fulfilledSignal.Event
+	return self
 end
 
 function Promise:Fulfill(...)
-	if not self._fulfilled then
+	if not self.IsFulfilled then
 		self.Values = {...}
-		self._fulfilled = true
+		self.IsFulfilled = true
 		self._fulfilledSignal:Fire(...)
 	end
 end
@@ -21,16 +22,19 @@ end
 function Promise.All(...)
 	local agglomerate = Promise.new()
 	local waitingOn = select("#", ...)
+	local values = {}
 	
 	for i = 1, select("#", ...) do
 		local promise = select(i, ...)
 		local connection
-		connection = promise.Fulfilled:Connect(function()
+		connection = promise.Fulfilled:Connect(function(...)
 			connection:Disconnect()
 			waitingOn = waitingOn - 1
+
+			table.insert(values, {...})
 			
 			if waitingOn == 0 then
-				agglomerate:Fulfill()
+				agglomerate:Fulfill(values)
 			end
 		end)
 	end
@@ -44,14 +48,14 @@ function Promise.Any(...)
 	
 	for i = 1, select("#", ...) do
 		local promise = select(i, ...)
-		table.insert(connections, promise.Fulfilled:Connect(function()
+		table.insert(connections, promise.Fulfilled:Connect(function(...)
 			for _, connection in ipairs(connections) do
 				if connection.Connected then
 					connection:Disconnect()
 				end
 			end
 			
-			agglomerate:Fulfill()
+			agglomerate:Fulfill(...)
 		end))
 	end
 	
