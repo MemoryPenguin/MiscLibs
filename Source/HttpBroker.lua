@@ -16,7 +16,9 @@ local Promise do
 		Promise = require(game.ReplicatedStorage.Promise)
 	elseif script:FindFirstChild("Promise") then
 		Promise = require(script.Promise)
-	else
+	end
+
+	if Promise == nil then
 		warn("[HttpBroker]: Promise module is not available; asynchronous HTTP requests are not available.")
 	end
 end
