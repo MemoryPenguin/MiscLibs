@@ -1,6 +1,6 @@
 The HttpBroker class is an intermediary for interacting with [HttpService](http://wiki.roblox.com/index.php?title=API:Class/HttpService) that adds request limiting and recovery from limit exhaustion.
 
-HttpBroker supports optional asynchronous requests via the [Promise](Promise.md) module. See [module loading](Load.md#Module Dependencies) for information on how this is loaded. If promises are not available, asynchronous requests will not be available. 
+HttpBroker supports optional asynchronous requests via the [Promise](Promise.md) module. See [module loading](Load.md#module-dependencies) for information on how this is loaded. If promises are not available, asynchronous requests will not be available. 
 
 ## API
 ### HttpBroker HttpBroker.new(int limit = 100)
