@@ -4,7 +4,7 @@ Items are returned in first-in-first-out order - the first item inserted into a 
 
 ## API
 
-### PriorityQueue.new()
+### PriorityQueue PriorityQueue.new()
 Creates an empty priority queue and returns it.
 
 ### readonly int PriorityQueue.Count
