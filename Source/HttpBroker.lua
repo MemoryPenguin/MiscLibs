@@ -16,9 +16,7 @@ local Promise do
 		Promise = require(game.ReplicatedStorage.Promise)
 	elseif script:FindFirstChild("Promise") then
 		Promise = require(script.Promise)
-	end
-
-	if Promise == nil then
+	else
 		warn("[HttpBroker]: Promise module is not available; asynchronous HTTP requests are not available.")
 	end
 end
@@ -64,9 +62,11 @@ function HttpBroker:_performRequest()
 				self._used = self._used - 1
 				
 				if self._used < self._limit then
-					self._requestAvailableSignal.Event:Fire()
+					self._requestAvailableSignal:Fire()
 				end
 			end)
+
+			table.remove(self._queue, 1)
 			
 			break
 		else
