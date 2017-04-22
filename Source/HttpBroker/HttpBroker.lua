@@ -115,7 +115,7 @@ for name, method in pairs(HttpServiceMethods) do
 		self:_queueRequest(request)
 		
 		local connection
-		connection = self._requestCompleteSignal:Connect(function(guid, status, result)
+		connection = self._requestCompleteSignal.Event:Connect(function(guid, status, result)
 			if guid == request.Guid then
 				connection:Disconnect()
 				promise:Fulfill(status, result)
