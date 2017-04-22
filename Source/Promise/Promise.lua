@@ -19,6 +19,11 @@ function Promise:Fulfill(...)
 	end
 end
 
+function Promise:Then(listener)
+	self.Fulfilled:Connect(listener)
+	return self
+end
+
 function Promise.All(...)
 	local agglomerate = Promise.new()
 	local waitingOn = select("#", ...)
