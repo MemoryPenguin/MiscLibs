@@ -1,6 +1,6 @@
 return {
 	Name = "httpbroker",
-	Version = "1.0.0",
+	Version = "1.0.1",
 	Description = "Rate-limited, fault-tolerant HTTP request handling.",
 	Author = {
 		Name = "MemoryPenguin",
