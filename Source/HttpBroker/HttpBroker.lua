@@ -7,19 +7,8 @@ local LimitBackoffTime = 15
 local HttpService = game:GetService("HttpService")
 local HttpServiceMethods = { Get = HttpService.GetAsync, Post = HttpService.PostAsync }
 
--- Module requiring
-local Promise do
-	if game.ReplicatedStorage:FindFirstChild("Load") then
-		local Load = require(game.ReplicatedStorage.Load)
-		Promise = Load("Promise")
-	elseif game.ReplicatedStorage:FindFirstChild("Promise") then
-		Promise = require(game.ReplicatedStorage.Promise)
-	elseif script:FindFirstChild("Promise") then
-		Promise = require(script.Promise)
-	else
-		warn("[HttpBroker]: Promise module is not available; asynchronous HTTP requests are not available.")
-	end
-end
+local require = _G.RPM while not require do wait() require = _G.RPM end
+local Promise = require("promise")
 
 local function BuildRequest(guid, method, ...)
 	return {
@@ -118,24 +107,22 @@ for name, method in pairs(HttpServiceMethods) do
 	end
 end
 
-if Promise ~= nil then
-	for name, method in pairs(HttpServiceMethods) do
-		HttpBroker[name.."Async"] = function(self, ...)
-			local promise = Promise.new()
-			local request = BuildRequest(HttpService:GenerateGUID(), method, ...)
-			
-			self:_queueRequest(request)
-			
-			local connection
-			connection = self._requestCompleteSignal:Connect(function(guid, status, result)
-				if guid == request.Guid then
-					connection:Disconnect()
-					promise:Fulfill(status, result)
-				end
-			end)
-			
-			return promise
-		end
+for name, method in pairs(HttpServiceMethods) do
+	HttpBroker[name.."Async"] = function(self, ...)
+		local promise = Promise.new()
+		local request = BuildRequest(HttpService:GenerateGUID(), method, ...)
+		
+		self:_queueRequest(request)
+		
+		local connection
+		connection = self._requestCompleteSignal:Connect(function(guid, status, result)
+			if guid == request.Guid then
+				connection:Disconnect()
+				promise:Fulfill(status, result)
+			end
+		end)
+		
+		return promise
 	end
 end
 
